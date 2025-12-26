@@ -76,8 +76,8 @@
 
         {{-- DONUT TOTAL PEMASUKAN VS PENGELUARAN --}}
         <div class="col-lg-4 col-12 mb-2">
-            <div class="card shadow-sm border-0 bg-white h-100">
-                <div class="card-header bg-light border-0 py-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header border-0 py-2">
                     <h6 class="mb-0 text-primary"><i class="fas fa-chart-pie mr-2"></i>Total Pemasukan vs Pengeluaran</h6>
                 </div>
                 <div class="card-body text-center py-2">
@@ -88,8 +88,8 @@
 
         {{-- DAFTAR KATEGORI --}}
         <div class="col-lg-4 col-12 mb-2">
-            <div class="card shadow-sm border-0 bg-white h-100">
-                <div class="card-header bg-light border-0 py-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header border-0 py-2">
                     <h6 class="mb-0 text-primary"><i class="fas fa-tags mr-2"></i>Daftar Kategori</h6>
                 </div>
                 <div class="card-body p-0">
@@ -133,8 +133,8 @@
 
         {{-- TRANSAKSI TERBARU --}}
         <div class="col-lg-4 col-12 mb-2">
-            <div class="card shadow-sm border-0 bg-white h-100">
-                <div class="card-header bg-light border-0 py-2">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header border-0 py-2">
                     <h6 class="mb-0 text-primary"><i class="fas fa-history mr-2"></i>Transaksi Terbaru</h6>
                 </div>
                 <div class="card-body p-0">
@@ -161,9 +161,13 @@ body {
     background-color: #f8f9fa;
 }
 
+/* Dark mode support */
+body.dark-mode {
+    background-color: #343a40;
+}
+
 .list-group-item {
     padding: 8px 12px;
-    background-color: #fff;
     border-color: #e9ecef;
 }
 .nav-tabs .nav-link {
@@ -184,38 +188,34 @@ body {
     z-index: 2;
     box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1);
 }
-    border-color: #e9ecef;
-    padding: 0.5rem 1rem;
-}
-.nav-tabs .nav-link.active {
-    background-color: #007bff;
-    color: white;
-}
-.card-body {
-    padding: 1rem;
+
+/* Dark mode adjustments */
+body.dark-mode {
+    background-color: #343a40;
 }
 
-/* Responsive adjustments */
-/* @media (max-width: 768px) {
-    .icon-box {
-        width: 35px;
-        height: 35px;
-        font-size: 16px;
-    }
-    .card-body h4 {
-        font-size: 1.2rem;
-    }
-    .card-body p {
-        font-size: 0.9rem;
-    }
-    .table-responsive {
-        font-size: 0.85rem;
-    }
-    .btn {
-        font-size: 0.9rem;
-        padding: 0.375rem 0.75rem;
-    }
-} */
+body.dark-mode .table-scroll thead th {
+    background: #495057;
+    color: #fff;
+}
+
+body.dark-mode .list-group-item {
+    background-color: #495057;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+body.dark-mode .nav-tabs .nav-link {
+    color: #ffc107;
+    background-color: #495057;
+    border-color: #6c757d;
+}
+
+body.dark-mode .nav-tabs .nav-link.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
 
 /* Make charts responsive */
 canvas {

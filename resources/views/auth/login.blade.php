@@ -1,6 +1,6 @@
 @extends('layouts.guest')
 
-@section('title', 'Masuk - Pencatatan Keuangan')
+@section('title', 'Masuk - CoinkuPencatatanKeuangan')
 
 @section('content')
     <div class="auth-header">

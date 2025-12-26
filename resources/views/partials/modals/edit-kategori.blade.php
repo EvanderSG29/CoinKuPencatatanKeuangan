@@ -12,14 +12,12 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label for="edit_nama_kategori">Nama Kategori:</label>
-                        <input type="text" class="form-control" id="edit_nama_kategori" name="nama_kategori" required placeholder="Masukkan nama kategori baru">
-                    </div>
+                    <x-adminlte-input name="nama_kategori" label="Nama Kategori" placeholder="Masukkan nama kategori baru" required>
+                    </x-adminlte-input>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Perbarui</button>
+                    <x-adminlte-button type="button" theme="secondary" label="Batal" data-dismiss="modal"/>
+                    <x-adminlte-button type="submit" theme="primary" label="Perbarui"/>
                 </div>
             </form>
         </div>

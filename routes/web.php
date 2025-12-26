@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::get('/profile/{username}', [UserController::class, 'show'])->name('profile.show');
 });
 
 // Public asset routes

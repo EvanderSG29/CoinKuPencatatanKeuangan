@@ -5,7 +5,7 @@
 
 @section('card_header')
     <h4 class="m-0">Edit Profil</h4>
-    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary btn-sm">Kembali</a>
+    <x-adminlte-button theme="secondary" size="sm" label="Kembali" onclick="window.location.href='{{ route('users.index') }}'"/>
 @stop
 
 @section('card_body')
@@ -62,64 +62,40 @@
                 {{-- Inputan --}}
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label><strong>Nama Lengkap</strong></label>
-                        <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                               value="{{ old('name', $user->name) }}">
-                        @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <x-adminlte-input name="name" label="Nama Lengkap" value="{{ old('name', $user->name) }}">
+                        </x-adminlte-input>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label><strong>Username</strong></label>
-                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror"
-                               value="{{ old('username', $user->username) }}">
-                        @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        <x-adminlte-input name="username" label="Username" value="{{ old('username', $user->username) }}">
+                        </x-adminlte-input>
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label><strong>Email</strong></label>
-                    <input type="email" class="form-control" value="{{ $user->email }}" >
-                </div>
+                <x-adminlte-input name="email" label="Email" value="{{ $user->email }}" readonly>
+                </x-adminlte-input>
 
-                <div class="mb-3">
-                    <label><strong>Nomor Telepon</strong></label>
-                    <input type="text" name="no_telp" class="form-control @error('no_telp') is-invalid @enderror"
-                           value="{{ old('no_telp', $user->no_telp) }}">
-                    @error('no_telp') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
+                <x-adminlte-input name="no_telp" label="Nomor Telepon" value="{{ old('no_telp', $user->no_telp) }}">
+                </x-adminlte-input>
 
-                <div class="mb-3">
-                    <label><strong>Lokasi</strong></label>
-                    <input type="text" name="lokasi" class="form-control @error('lokasi') is-invalid @enderror"
-                           value="{{ old('lokasi', $user->lokasi) }}">
-                    @error('lokasi') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                </div>
+                <x-adminlte-input name="lokasi" label="Lokasi" value="{{ old('lokasi', $user->lokasi) }}">
+                </x-adminlte-input>
 
-                <div class="mb-3">
-                    <label><strong>Jenis Kelamin</strong></label>
-                    <select name="jenis_kelamin" class="form-control">
-                        <option value="">-- Pilih --</option>
-                        <option value="laki-laki" {{ $user->jenis_kelamin == 'laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="perempuan" {{ $user->jenis_kelamin == 'perempuan' ? 'selected' : '' }}>Perempuan</option>
-                    </select>
-                </div>
+                <x-adminlte-select name="jenis_kelamin" label="Jenis Kelamin">
+                    <x-adminlte-options :options="['laki-laki' => 'Laki-laki', 'perempuan' => 'Perempuan']" empty-option="-- Pilih --" :selected="$user->jenis_kelamin"/>
+                </x-adminlte-select>
 
-                <div class="mb-3">
-                    <label><strong>Tanggal Lahir</strong></label>
-                    <input type="date" name="tanggal_lahir" class="form-control"
-                           value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}">
-                </div>
+                <x-adminlte-input name="tanggal_lahir" label="Tanggal Lahir" type="date" value="{{ old('tanggal_lahir', $user->tanggal_lahir) }}">
+                </x-adminlte-input>
 
-                <div class="mb-3">
-                    <label><strong>Alamat</strong></label>
-                    <textarea name="alamat" rows="3" class="form-control">{{ old('alamat', $user->alamat) }}</textarea>
-                </div>
+                <x-adminlte-textarea name="alamat" label="Alamat" rows="3" value="{{ old('alamat', $user->alamat) }}">
+                </x-adminlte-textarea>
 
             </div>
 
             <div class="card-footer bg-light text-right">
-                <button class="btn btn-primary">Simpan Perubahan</button>
-                <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Batal</a>
+                <x-adminlte-button type="submit" theme="primary" label="Simpan Perubahan"/>
+                <x-adminlte-button type="button" theme="secondary" label="Batal" onclick="window.location.href='{{ route('users.index') }}'"/>
             </div>
         </form>
 

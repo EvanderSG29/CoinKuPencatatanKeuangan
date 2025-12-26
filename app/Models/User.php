@@ -60,4 +60,19 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Transaksi::class, 'id_user', 'id_user');
     }
+
+    public function adminlte_image()
+    {
+        return $this->path_foto ? asset('storage/' . $this->path_foto) : asset('storage/users/profil.png');
+    }
+
+    public function adminlte_desc()
+    {
+        return 'Username: ' . $this->username;
+    }
+
+    public function adminlte_profile_url()
+    {
+        return 'profile/' . $this->username;
+    }
 }

@@ -4,11 +4,7 @@
 
 @section('content')
     <div class="auth-header">
-        @php
-            $logoPath = storage_path('app/public/img/Logo CoinKuPencatatanKeuangan.png');
-            $logoUrl = file_exists($logoPath) ? asset('storage/img/Logo CoinKuPencatatanKeuangan.png') : route('logo');
-        @endphp
-        <img src="{{ $logoUrl }}" alt="Logo Pencatatan" style="max-height: 160px; margin-bottom: 1rem;" />
+        <img src="{{ asset('storage/img/Logo CoinKuPencatatanKeuangan.png') }}" alt="Logo Pencatatan" style="max-height: 160px; margin-bottom: 1rem;" />
     </div>
 
     <h5 class="auth-title">Verifikasi Email Anda</h5>

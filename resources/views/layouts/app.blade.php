@@ -1,5 +1,18 @@
 @extends('adminlte::page')
 
+@section('sidebar')
+    <!-- Sidebar user panel (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="image">
+            <img src="{{ asset('storage/img/Logo.png') }}" class="img-circle elevation-2" alt="User Image" style="width: 40px; height: 40px;">
+        </div>
+        <div class="info">
+            <a href="#" class="d-block">{{ Auth::user()->name ?? 'User' }}</a>
+        </div>
+    </div>
+    @parent
+@endsection
+
 @section('content_header')
     <h3 class="text-dark">@yield('page_heading')</h3>
 @stop
@@ -21,6 +34,11 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('preloader')
+    <i class="fas fa-4x fa-spin fa-spinner text-secondary"></i>
+    <h4 class="mt-4 text-dark">Loading</h4>
 @stop
 
 @stack('js')

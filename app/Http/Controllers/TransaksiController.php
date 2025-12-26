@@ -19,42 +19,12 @@ class TransaksiController extends Controller
     public function index()
     {
         $userId = auth()->id();
-        $transaksis = Transaksi::with('kategori')->where('id_user', $userId)->get();
+        $transaksis = Transaksi::where('id_user', $userId)->get();
         $kategoris = Kategori::where('id_user', $userId)->get();
 
-        // Statistik transaksi
-        $totalTransaksi = $transaksis->count();
-        $totalPemasukan = $transaksis->where('jenis_transaksi', 'pemasukan')->sum('total_nominal');
-        $totalPengeluaran = $transaksis->where('jenis_transaksi', 'pengeluaran')->sum('total_nominal');
-        $sisaSaldo = $totalPemasukan - $totalPengeluaran;
-
-        // Data untuk grafik tren bulanan
-        $monthlyData = Transaksi::where('id_user', $userId)
-            ->selectRaw("YEAR(tanggal_transaksi) as year, MONTH(tanggal_transaksi) as month, jenis_transaksi, SUM(total_nominal) as total")
-            ->groupBy('year', 'month', 'jenis_transaksi')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get()
-            ->groupBy(['year', 'month']);
-
-        $chartLabels = [];
-        $pemasukanData = [];
-        $pengeluaranData = [];
-
-        foreach ($monthlyData as $year => $months) {
-            foreach ($months as $month => $data) {
-                $label = date('M Y', mktime(0, 0, 0, $month, 1, $year));
-                if (!in_array($label, $chartLabels)) {
-                    $chartLabels[] = $label;
-                    $pemasukanData[] = $data->where('jenis_transaksi', 'pemasukan')->sum('total');
-                    $pengeluaranData[] = $data->where('jenis_transaksi', 'pengeluaran')->sum('total');
-                }
-            }
-        }
 
         return view('Transaksi.index', compact(
-            'transaksis', 'totalTransaksi', 'totalPemasukan', 'totalPengeluaran', 'sisaSaldo',
-            'chartLabels', 'pemasukanData', 'pengeluaranData', 'kategoris'
+            'transaksis',  'kategoris'
         ));
     }
 
@@ -72,13 +42,26 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
+        // Handle single transaction from modal
+        if (!is_array($request->nama_transaksi)) {
+            $request->merge([
+                'tanggal_transaksi' => [$request->tanggal_transaksi],
+                'nama_transaksi' => [$request->nama_transaksi],
+                'id_kategori' => [[$request->id_kategori]], // Array of arrays
+                'jenis_transaksi' => [$request->jenis_transaksi],
+                'qty' => [$request->qty],
+                'nominal' => [$request->nominal],
+            ]);
+        }
+
         $request->validate([
             'tanggal_transaksi' => 'required|array',
             'tanggal_transaksi.*' => 'required|date',
             'nama_transaksi' => 'required|array',
             'nama_transaksi.*' => 'required|string|max:255',
             'id_kategori' => 'required|array',
-            'id_kategori.*' => 'required|exists:tb_kategori,id_kategori',
+            'id_kategori.*' => 'required|array',
+            'id_kategori.*.*' => 'required|exists:tb_kategori,id_kategori',
             'jenis_transaksi' => 'required|array',
             'jenis_transaksi.*' => 'required|string|max:255',
             'qty' => 'required|array',
@@ -98,7 +81,7 @@ class TransaksiController extends Controller
                 'id_user' => $userId,
                 'tanggal_transaksi' => $request->tanggal_transaksi[$i],
                 'nama_transaksi' => $request->nama_transaksi[$i],
-                'id_kategori' => $request->id_kategori[$i],
+                'id_kategori' => json_encode($request->id_kategori[$i]),
                 'jenis_transaksi' => strtolower($request->jenis_transaksi[$i]),
                 'qty' => $qty,
                 'nominal' => $nominal,
@@ -132,6 +115,15 @@ class TransaksiController extends Controller
         $this->authorizeOwnership($transaksi);
 
         $kategoris = Kategori::where('id_user', auth()->id())->get();
+
+        // Decode id_kategori if it's JSON
+        if (!is_array($transaksi->id_kategori)) {
+            $decoded = json_decode($transaksi->id_kategori, true);
+            $transaksi->id_kategori = is_array($decoded) ? $decoded[0] : $transaksi->id_kategori;
+        } else {
+            $transaksi->id_kategori = $transaksi->id_kategori[0] ?? null;
+        }
+
         return view('Transaksi.edit', compact('transaksi', 'kategoris'));
     }
 
@@ -157,7 +149,7 @@ class TransaksiController extends Controller
         $transaksi->update([
             'tanggal_transaksi' => $request->tanggal_transaksi,
             'nama_transaksi' => $request->nama_transaksi,
-            'id_kategori' => $request->id_kategori,
+            'id_kategori' => json_encode([$request->id_kategori]),
             'jenis_transaksi' => strtolower($request->jenis_transaksi),
             'qty' => $qty,
             'nominal' => $nominal,

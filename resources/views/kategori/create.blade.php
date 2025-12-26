@@ -13,15 +13,13 @@
     <form action="{{ route('kategori.store') }}" method="POST">
         @csrf
         <div id="input-container">
-            <div class="form-group">
-                <label for="nama_kategori">Nama Kategori:</label>
-                <input type="text" class="form-control" name="nama_kategori[]" required placeholder="Contoh: Tabungan, Hiburan & Rekreasi, dll.">
-            </div>
+            <x-adminlte-input name="nama_kategori[]" label="Nama Kategori" placeholder="Contoh: Tabungan, Hiburan & Rekreasi, dll." required>
+            </x-adminlte-input>
         </div>
         
-        <button type="button" id="add-input-btn" class="btn btn-secondary mb-3">+ Tambah Input</button>
+        <x-adminlte-button type="button" theme="secondary" label="+ Tambah Input" id="add-input-btn" class="mb-3"/>
         <br>
-        <button type="submit" class="btn btn-primary">Tambah Kategori</button>
+        <x-adminlte-button type="submit" theme="primary" label="Tambah Kategori"/>
     </form>
 @endsection
 

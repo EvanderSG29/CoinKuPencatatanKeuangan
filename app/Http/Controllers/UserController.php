@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         $user = auth()->user();
-        return view('User.index', compact('user'));
+        return redirect()->route('profile.show', $user->username);
     }
 
     /**
@@ -61,6 +61,15 @@ class UserController extends Controller
         $user->update($validated);
 
         return redirect()->route('users.index')->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    /**
+     * Display the specified user profile.
+     */
+    public function show($username)
+    {
+        $user = User::where('username', $username)->firstOrFail();
+        return view('User.show', compact('user'));
     }
 }
 

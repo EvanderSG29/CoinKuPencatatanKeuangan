@@ -2,6 +2,8 @@
 
 @section('title', 'Daftar Kategori')
 
+@section('plugins.Datatables', true)
+@section('plugins.DatatablesPlugins', true)
 
 @section('content')
 <div class="container-fluid">
@@ -13,17 +15,9 @@
             <p class="text-muted mb-0">Kelola kategori untuk pengeluaran dan pemasukan Anda.</p>
         </div>
         <div class="d-grid gap-2" style="grid-template-columns: 1fr;">
-            <button class="btn btn-warning btn-sm">
-                <i class="fas fa-trash mr-2"></i>Hapus Semua
-            </button>
-
-            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createKategoriModal">
-                <i class="fas fa-plus mr-2"></i>Tambah Kategori
-            </button>   
-
-            <button id="add-defaults-btn" class="btn btn-secondary btn-sm">
-                <i class="fas fa-list mr-2"></i>Tambah Default
-            </button>
+            <x-adminlte-button theme="warning" size="sm" label="Hapus Semua" icon="fas fa-trash" id="clear-kategori-btn"/>
+            <x-adminlte-button theme="primary" size="sm" label="Tambah Kategori" icon="fas fa-plus" id="add-kategori-btn"/>
+            <x-adminlte-button theme="secondary" size="sm" label="Tambah Default" icon="fas fa-list" id="add-defaults-btn"/>
         </div>
     </div>
     {{-- ISI HALAMAN --}}
@@ -69,40 +63,34 @@
             <h6 class="m-0 font-weight-bold text-primary">Daftar Kategori</h6>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="thead-light">
-                        <tr>
-                            <th style="width:60px;">No</th>
-                            <th>Nama Kategori</th>
-                            <th style="width:80px;">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($kategoris as $i => $kategori)
-                            <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td>{{ $kategori->nama_kategori }}</td>
-                                <td>
-                                    <div class="dropdown">
-                                        <a href="#" class="text-secondary" data-toggle="dropdown" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right">
-                                            <a class="dropdown-item edit-kategori-link" href="#" data-id="{{ $kategori->id_kategori }}" data-nama="{{ $kategori->nama_kategori }}">Edit</a>
-                                            <a class="dropdown-item text-danger delete-kategori-link" href="#" data-id="{{ $kategori->id_kategori }}">Hapus</a>
-                                            <form id="delete-form-{{ $kategori->id_kategori }}" action="{{ route('kategori.destroy', $kategori) }}" method="POST" style="display:none;">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            @php
+            $heads = [
+                ['label' => 'No', 'width' => 10],
+                'Nama Kategori',
+                ['label' => 'Aksi', 'no-export' => true, 'width' => 15],
+            ];
+
+            $config = [
+                'data' => [],
+                'order' => [[0, 'asc']],
+                'columns' => [null, null, ['orderable' => false]],
+                'pageLength' => 10,
+                'lengthMenu' => [10, 25, 50, 100],
+            ];
+
+            foreach($kategoris as $i => $kategori) {
+                $btnEdit = '<a href="#" class="btn btn-xs btn-default text-primary mx-1 shadow edit-kategori-link" data-id="' . $kategori->id_kategori . '" data-nama="' . $kategori->nama_kategori . '" title="Edit"><i class="fa fa-lg fa-fw fa-pen"></i></a>';
+                $btnDelete = '<a href="#" class="btn btn-xs btn-default text-danger mx-1 shadow delete-kategori-link" data-id="' . $kategori->id_kategori . '" title="Hapus"><i class="fa fa-lg fa-fw fa-trash"></i></a>';
+                $config['data'][] = [
+                    $i + 1,
+                    $kategori->nama_kategori,
+                    '<nobr>' . $btnEdit . $btnDelete . '</nobr>',
+                ];
+            }
+            @endphp
+
+            <x-adminlte-datatable id="kategori-table" :heads="$heads" :config="$config"
+                head-theme="" theme="" striped hoverable with-buttons beautify />
         </div>
     </div>
 
@@ -118,8 +106,18 @@
     }
 }
 </style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap4.min.css">
 <script>
     (function(){
+        // Add kategori button
+        document.getElementById('add-kategori-btn').addEventListener('click', function() {
+            $('#createKategoriModal').modal('show');
+        });
+
         const defaults = [
             'Hiburan & Rekreasi',
             'Tabungan',
@@ -191,7 +189,7 @@
         });
 
         // delete all categories (atur ke awal)
-        document.querySelector('.btn-warning').addEventListener('click', function(){
+        document.getElementById('clear-kategori-btn').addEventListener('click', function(){
             if (!confirm('Hapus semua kategori Anda? Tindakan ini tidak bisa dibatalkan.')) return;
             // create form and submit
             const f = document.createElement('form'); f.method='POST'; f.action='{{ route('kategori.clear') }}';
@@ -199,26 +197,31 @@
             f.appendChild(token); document.body.appendChild(f); f.submit();
         });
 
-        // delete single category via dropdown link
-        document.querySelectorAll('.delete-kategori-link').forEach(function(link){
-            link.addEventListener('click', function(e){
-                e.preventDefault();
-                if (!confirm('Hapus kategori ini?')) return;
-                const id = this.getAttribute('data-id');
-                document.getElementById('delete-form-' + id).submit();
-            });
+        // delete single category via link
+        $('#kategori-table').on('click', '.delete-kategori-link', function(e){
+            e.preventDefault();
+            const id = $(this).data('id');
+            if (confirm('Hapus kategori ini?')) {
+                const form = $('<form>', {
+                    method: 'POST',
+                    action: '{{ url("kategori") }}/' + id
+                });
+                form.append($('<input>', { type: 'hidden', name: '_token', value: '{{ csrf_token() }}' }));
+                form.append($('<input>', { type: 'hidden', name: '_method', value: 'DELETE' }));
+                $('body').append(form);
+                form.submit();
+            }
         });
 
-        // edit category via dropdown link
-        document.querySelectorAll('.edit-kategori-link').forEach(function(link){
-            link.addEventListener('click', function(e){
-                e.preventDefault();
-                const id = this.getAttribute('data-id');
-                const nama = this.getAttribute('data-nama');
-                document.getElementById('edit_nama_kategori').value = nama;
-                document.getElementById('edit-kategori-form').action = '{{ url('kategori') }}/' + id;
-                $('#editKategoriModal').modal('show');
-            });
+        // edit category via link
+        $(document).on('click', '.edit-kategori-link', function(e){
+            e.preventDefault();
+            const id = $(this).data('id');
+            const nama = $(this).data('nama');
+            const modal = $('#editKategoriModal');
+            modal.find('input[name="nama_kategori"]').val(nama);
+            modal.find('#edit-kategori-form').attr('action', '{{ url('kategori') }}/' + id);
+            modal.modal('show');
         });
     })();
 </script>

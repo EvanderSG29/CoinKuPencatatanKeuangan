@@ -66,7 +66,7 @@
                         <option value="">Pilih Kategori</option>
                         @foreach($kategoris as $kategori)
                             <option value="{{ $kategori->id_kategori }}" 
-                                {{ $transaksi->id_kategori == $kategori->id_kategori ? 'selected' : '' }}>
+                                {{ (string)$transaksi->id_kategori === (string)$kategori->id_kategori ? 'selected' : '' }}>
                                 {{ $kategori->nama_kategori }}
                             </option>
                         @endforeach
@@ -76,8 +76,8 @@
                 <div class="form-group col-md-3">
                     <label>Jenis:</label>
                     <select class="form-control" name="jenis_transaksi" required>
-                        <option value="Pemasukan" {{ $transaksi->jenis_transaksi == 'Pemasukan' ? 'selected' : '' }}>Pemasukan</option>
-                        <option value="Pengeluaran" {{ $transaksi->jenis_transaksi == 'Pengeluaran' ? 'selected' : '' }}>Pengeluaran</option>
+                        <option value="Pemasukan" {{ ucfirst($transaksi->jenis_transaksi) == 'Pemasukan' ? 'selected' : '' }}>Pemasukan</option>
+                        <option value="Pengeluaran" {{ ucfirst($transaksi->jenis_transaksi) == 'Pengeluaran' ? 'selected' : '' }}>Pengeluaran</option>
                     </select>
                 </div>
 
@@ -94,9 +94,11 @@
                     >
                 </div>
             </div>
+            
         </div>
 
         <div>
+            
             <a href="{{ route('transaksi.index') }}" class="btn btn-light">Batal</a>
             <button type="submit" class="btn btn-primary">Perbarui Transaksi</button>
         </div>

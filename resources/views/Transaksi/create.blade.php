@@ -4,11 +4,15 @@
 
 @section('page_heading', 'Tambah Transaksi')
 
-@section('card_header')
-    <h3>Tambah Transaksi Baru</h3>
-@stop
+
 
 @section('card_body')
+    @php
+        $kategoriOptions = [];
+        foreach($kategoris as $kategori) {
+            $kategoriOptions[$kategori->id_kategori] = $kategori->nama_kategori;
+        }
+    @endphp
     <form action="{{ route('transaksi.store') }}" method="POST" id="transaksi-form">
         @csrf
         <div id="input-container">
@@ -21,65 +25,56 @@
                 
                 <!-- Row 1: Nama (6) dan Nominal (4) -->
                 <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label for="nama_transaksi">Nama Transaksi:</label>
-                        <input type="text" class="form-control" name="nama_transaksi[]" required>
+                    <div class="col-md-6">
+                        <x-adminlte-input name="nama_transaksi[]" label="Nama Transaksi" required>
+                        </x-adminlte-input>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label for="nominal">Nominal:</label>
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Rp</span>
-                            </div>
-                            <input type="text" class="form-control nominal-input" name="nominal[]" placeholder="0" required>
-                            <input type="hidden" class="nominal-hidden" name="nominal_hidden[]" value="0">
-                        </div>
+                    <div class="col-md-6">
+                        <x-adminlte-input name="nominal[]" label="Nominal" placeholder="0" required class="nominal-input">
+                            <x-slot name="prependSlot">
+                                <div class="input-group-text">Rp</div>
+                            </x-slot>
+                        </x-adminlte-input>
+                        <input type="hidden" class="nominal-hidden" name="nominal_hidden[]" value="0">
                     </div>
                 </div>
 
                 <!-- Row 2: Tanggal, Kategori, Jenis, Qty -->
                 <div class="form-row">
-                    <div class="form-group col-md-3">
-                        <label for="tanggal_transaksi">Tanggal:</label>
-                        <input type="date" class="form-control" name="tanggal_transaksi[]" required> 
+                    <div class="col-md-3">
+                        <x-adminlte-input name="tanggal_transaksi[]" label="Tanggal" type="date" required>
+                        </x-adminlte-input>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="id_kategori">Kategori:</label>
-                        <select class="form-control" name="id_kategori[]" required>
-                            <option value="">Pilih Kategori</option>
-                            @foreach($kategoris as $kategori)
-                                <option value="{{ $kategori->id_kategori }}">{{ $kategori->nama_kategori }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-md-3">
+                        <x-adminlte-select name="id_kategori[]" label="Kategori" required>
+                            <x-adminlte-options :options="$kategoriOptions" empty-option="Pilih Kategori"/>
+                        </x-adminlte-select>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="jenis_transaksi">Jenis:</label>
-                        <select class="form-control" name="jenis_transaksi[]" required>
-                            <option value="">Pilih Jenis</option>
-                            <option value="Pemasukan">Pemasukan</option>
-                            <option value="Pengeluaran">Pengeluaran</option>
-                        </select>
+                    <div class="col-md-3">
+                        <x-adminlte-select name="jenis_transaksi[]" label="Jenis" required>
+                            <x-adminlte-options :options="['Pemasukan' => 'Pemasukan', 'Pengeluaran' => 'Pengeluaran']" empty-option="Pilih Jenis"/>
+                        </x-adminlte-select>
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="qty">Qty:</label>
-                        <input type="number" class="form-control" name="qty[]" value="1" min="1" max="999" required>
+                    <div class="col-md-3">
+                        <x-adminlte-input name="qty[]" label="Qty" type="number" value="1" min="1" max="999" required>
+                        </x-adminlte-input>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="mb-3">
-            <button type="button" class="btn btn-secondary" id="add-input-btn">+ Tambah Form Transaksi</button>
+            <x-adminlte-button type="button" theme="secondary" label="+ Tambah Form Transaksi" id="add-input-btn"/>
         </div>
         
         <div>
-            <a href="{{ route('transaksi.index') }}" class="btn btn-light">Batal</a>
-            <button type="submit" class="btn btn-primary">Input Transaksi</button>
+            <x-adminlte-button type="button" theme="light" label="Batal" onclick="window.location.href='{{ route('transaksi.index') }}'"/>
+            <x-adminlte-button type="submit" theme="primary" label="Input Transaksi"/>
         </div>
     </form>
 @endsection
 
-@push('js')
+@section('js')
 <script>
     $(document).ready(function() {
         // Function to format number as Rupiah
@@ -125,6 +120,7 @@
             });
             template.find('select').prop('selectedIndex', 0);
             template.find('.nominal-hidden').val('0');
+            template.find('input[type="checkbox"]').prop('checked', false);
             
             $('#input-container').append(template);
             updateEntries();
@@ -140,5 +136,5 @@
         updateEntries();
     });
 </script>
-@endpush
+@endsection
 

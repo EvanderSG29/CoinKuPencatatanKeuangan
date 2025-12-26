@@ -12,17 +12,14 @@
                 @csrf
                 <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
                     <div id="input-container-modal">
-                        <div class="form-group">
-                            <label for="nama_kategori">Nama Kategori:</label>
-                            <input type="text" class="form-control" name="nama_kategori[]" required placeholder="Contoh: Tabungan, Hiburan & Rekreasi, dll.">
-                        </div>
+                        <x-adminlte-input name="nama_kategori[]" label="Nama Kategori" placeholder="Contoh: Tabungan, Hiburan & Rekreasi, dll." required>
+                        </x-adminlte-input>
                     </div>
                                         <p>input lebih dari satu? <a href="{{ route('kategori.create') }}" class="tx-primary">klik di sini!</a></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-
+                    <x-adminlte-button type="button" theme="secondary" label="Batal" data-dismiss="modal"/>
+                    <x-adminlte-button type="submit" theme="primary" label="Simpan"/>
                 </div>
             </form>
         </div>
